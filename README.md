@@ -2,6 +2,7 @@ flutter run -d ios
 open -a Simulator
 flutter devices
 flutter run -d "iPhone 16 Plus"
+flutter run -d "iPhone (3)"
 
 
 
