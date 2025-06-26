@@ -7,13 +7,8 @@ import 'package:http/http.dart' as http;
 
 class TicketListScreen extends StatefulWidget {
   final List<String> scannedCodes;
-  final int totalTickets;
 
-  const TicketListScreen({
-    super.key,
-    required this.scannedCodes,
-    required this.totalTickets,
-  });
+  const TicketListScreen({super.key, required this.scannedCodes});
 
   @override
   State<TicketListScreen> createState() => _TicketListScreenState();
@@ -23,7 +18,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
   List<String> validTickets = [];
   bool isLoading = false;
   int totalTickets = 0;
-  
+
   @override
   void initState() {
     super.initState();
@@ -116,9 +111,13 @@ class _TicketListScreenState extends State<TicketListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Total Tickets: $totalTickets'),
-            Text('Scanned: ${widget.scannedCodes.length}'),
-            Text('Remaining: $remaining'),
+            if (totalTickets > 0) ...[
+              Text('Total Tickets: $totalTickets'),
+              Text('Scanned: ${widget.scannedCodes.length}'),
+              Text('Remaining: $remaining'),
+            ] else ...[
+              const Text('No tickets available. Please fetch.'),
+            ],
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: isLoading ? null : fetchValidTickets,

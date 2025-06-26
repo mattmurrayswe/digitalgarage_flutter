@@ -13,46 +13,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  List<String> scannedCodes = [];
   String? scannedCode;
 
-  void _navigateToScanner() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const QRScannerScreen()),
-    );
+  void _onItemTapped(int index) async {
+    if (index == 0) {
+      // Home - do nothing or reset
+      setState(() => _selectedIndex = index);
+    } else if (index == 1) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const QRScannerScreen()),
+      );
 
-    if (result != null) {
-      print('Raw scanned QR code: $result');
-
-      final parsed = tryParseJson(result);
-      if (parsed != null) {
-        print('Parsed QR data: $parsed');
-      } else {
-        print('Not a JSON QR code');
+      if (result != null) {
+        final parsed = tryParseJson(result);
+        setState(() {
+          scannedCode = result;
+          if (!scannedCodes.contains(result)) {
+            scannedCodes.add(result);
+          }
+        });
       }
-
-      setState(() {
-        scannedCode = result;
-        if (!scannedCodes.contains(result)) {
-          scannedCodes.add(result);
-        }
-      });
-    }
-  }
-
-  List<String> scannedCodes = [];
-  final int totalTickets = 10;
-
-  void _navigateToTicketList() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TicketListScreen(
-          scannedCodes: scannedCodes,
-          totalTickets: totalTickets,
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TicketListScreen(scannedCodes: scannedCodes),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -60,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: const LogoAppBar(),
       body: Container(
+        width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.centerLeft,
@@ -67,38 +59,55 @@ class _HomeScreenState extends State<HomeScreen> {
             colors: [Color(0xFF070707), Colors.black],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Welcome to digitalgarage.com.br App'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Welcome to digitalgarage.com.br App',
+              style: TextStyle(color: Colors.white),
+            ),
+            if (scannedCode != null) ...[
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _navigateToTicketList,
-                child: const Text('Ticket List'),
-              ),
-              ElevatedButton(
-                onPressed: _navigateToScanner,
-                child: const Text('Scan QR Code'),
-              ),
-              if (scannedCode != null) ...[
-                const SizedBox(height: 20),
-                Text(
-                  'Scanned: $scannedCode',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                'Scanned: $scannedCode',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () => setState(() => scannedCode = null),
-                  child: const Text('Clear Scanned Code'),
-                ),
-              ],
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => setState(() => scannedCode = null),
+                child: const Text('Clear Scanned Code'),
+              ),
             ],
-          ),
+          ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.qr_code_scanner),
+            label: 'Scan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tickets',
+          ),
+        ],
       ),
     );
   }

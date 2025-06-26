@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
+import 'package:digitalgarage_futter/models/ticket.dart';
+import 'package:hive/hive.dart';
 
 class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
@@ -55,18 +59,82 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) async {
-      if (_hasScanned || _isNavigating) return;
-      _hasScanned = true;
-      _isNavigating = true;
-      await Future.delayed(const Duration(milliseconds: 700));
-      if (mounted) {
-        Navigator.of(context).pop(scanData.code);
+void _onQRViewCreated(QRViewController controller) {
+  this.controller = controller;
+  controller.scannedDataStream.listen((scanData) async {
+    if (_hasScanned || _isNavigating) return;
+
+    _hasScanned = true;
+    _isNavigating = true;
+
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    try {
+      final code = scanData.code;
+
+      if (code == null) {
+        setState(() {
+          _hasScanned = false;
+          _isNavigating = false;
+        });
+        return;
       }
-    });
-  }
+
+      final parsed = jsonDecode(code);
+      print('Scanned QR code: $parsed');
+      final scannedId = parsed['order_id'].toString(); // Adjust based on your QR structure
+      print('scannedId: $scannedId');
+
+      final box = Hive.box<Ticket>('tickets');
+      final match = box.values.any((ticket) => ticket.orderId == scannedId);
+
+      if (!mounted) return;
+
+      if (match) {
+        await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('✅ Ticket Válido'),
+            content: const Icon(Icons.check_circle, color: Colors.green, size: 80),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        Navigator.of(context).pop(code); // Return code after alert
+      } else {
+        print('Ticket inválido: $scannedId');
+        await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('❌ Ticket Inválido'),
+            content: const Icon(Icons.cancel, color: Colors.red, size: 80),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        setState(() {
+          _hasScanned = false;
+          _isNavigating = false;
+        });
+      }
+    } catch (e) {
+      print('Erro ao validar QR: $e');
+      setState(() {
+        _hasScanned = false;
+        _isNavigating = false;
+      });
+    }
+  });
+}
+
 
   @override
   void dispose() {
