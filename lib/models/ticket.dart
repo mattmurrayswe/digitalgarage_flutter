@@ -24,6 +24,8 @@ class Ticket extends HiveObject {
   String address;
   @HiveField(9)
   String orderDate;
+  @HiveField(10)
+  String customerId; // Added field
 
   Ticket({
     required this.id,
@@ -36,6 +38,7 @@ class Ticket extends HiveObject {
     required this.location,
     required this.address,
     required this.orderDate,
+    required this.customerId, // Added parameter
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
@@ -50,6 +53,7 @@ class Ticket extends HiveObject {
       location: json['location'],
       address: json['address'],
       orderDate: json['order_date'],
+      customerId: json['customer_id'], // Added field
     );
   }
 
@@ -64,5 +68,6 @@ class Ticket extends HiveObject {
     'location': location,
     'address': address,
     'order_date': orderDate,
+    'customer_id': customerId, // Added field
   };
 }

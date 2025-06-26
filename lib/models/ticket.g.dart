@@ -27,13 +27,14 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       location: fields[7] as String,
       address: fields[8] as String,
       orderDate: fields[9] as String,
+      customerId: fields[10] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Ticket obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class TicketAdapter extends TypeAdapter<Ticket> {
       ..writeByte(8)
       ..write(obj.address)
       ..writeByte(9)
-      ..write(obj.orderDate);
+      ..write(obj.orderDate)
+      ..writeByte(10)
+      ..write(obj.customerId);
   }
 
   @override
