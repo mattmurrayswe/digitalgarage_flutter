@@ -23,6 +23,21 @@ class _TicketListScreenState extends State<TicketListScreen> {
   List<String> validTickets = [];
   bool isLoading = false;
   int totalTickets = 0;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadTicketsFromHive();
+  }
+
+  Future<void> _loadTicketsFromHive() async {
+    final box = Hive.box<Ticket>('tickets');
+    final tickets = box.values.toList();
+
+    setState(() {
+      totalTickets = tickets.length;
+    });
+  }
 
   Future<void> fetchValidTickets() async {
     setState(() => isLoading = true);
@@ -46,7 +61,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
         }
 
         setState(() {
-          // validTickets = tickets; // local state update (List<Ticket>)
+          totalTickets = tickets.length; // ✅ Update totalTickets
         });
       } else {
         print('Failed to fetch tickets: ${response.statusCode}');
@@ -92,7 +107,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final remaining = widget.totalTickets - widget.scannedCodes.length;
+    final remaining = totalTickets - widget.scannedCodes.length;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ticket Status')),
@@ -101,7 +116,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Total Tickets: ${widget.totalTickets}'),
+            Text('Total Tickets: $totalTickets'),
             Text('Scanned: ${widget.scannedCodes.length}'),
             Text('Remaining: $remaining'),
             const SizedBox(height: 20),
