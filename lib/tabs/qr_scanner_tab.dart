@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:hive/hive.dart';
 import '../models/ticket.dart';
 
@@ -12,116 +10,134 @@ class QRScannerTab extends StatefulWidget {
   const QRScannerTab({super.key, required this.onScan});
 
   @override
-  State<QRScannerTab> createState() => _QRScannerTabState();
+  State<QRScannerTab> createState() => QRScannerTabState();
 }
 
-class _QRScannerTabState extends State<QRScannerTab> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
+class QRScannerTabState extends State<QRScannerTab> {
+  final MobileScannerController cameraController = MobileScannerController();
   bool _hasScanned = false;
   bool _isNavigating = false;
 
-  @override
-  void reassemble() {
-    super.reassemble();
-    if (Platform.isAndroid) {
-      controller?.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller?.resumeCamera();
-    }
+  Future<void> pauseCamera() async {
+    await cameraController.pause();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        QRView(
-          key: qrKey,
-          onQRViewCreated: _onQRViewCreated,
-          overlay: QrScannerOverlayShape(
-            borderColor: Colors.blueAccent,
-            borderRadius: 10,
-            borderLength: 30,
-            borderWidth: 10,
-            cutOutSize: 250,
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-
-    // Pause immediately to avoid premature scan rect setup
-    controller.pauseCamera();
-
-    // Delay to allow camera to initialize before scanning
-    Future.delayed(const Duration(milliseconds: 500), () {
-      controller.resumeCamera();
-
-      controller.scannedDataStream.listen((scanData) async {
-        if (_hasScanned || _isNavigating) return;
-        _hasScanned = true;
-        _isNavigating = true;
-
-        await Future.delayed(const Duration(milliseconds: 700));
-
-        try {
-          final code = scanData.code;
-          if (code == null) {
-            setState(() {
-              _hasScanned = false;
-              _isNavigating = false;
-            });
-            return;
-          }
-
-          final parsed = jsonDecode(code);
-          final scannedId = parsed['order_id'].toString();
-
-          final box = Hive.box<Ticket>('tickets');
-          final match = box.values.any((ticket) => ticket.orderId == scannedId);
-
-          if (!mounted) return;
-
-          await showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: Text(match ? '✅ Ticket Válido' : '❌ Ticket Inválido'),
-              content: Icon(
-                match ? Icons.check_circle : Icons.cancel,
-                color: match ? Colors.green : Colors.red,
-                size: 80,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-
-          if (match) widget.onScan(code);
-
-          setState(() {
-            _hasScanned = false;
-            _isNavigating = false;
-          });
-        } catch (_) {
-          setState(() {
-            _hasScanned = false;
-            _isNavigating = false;
-          });
-        }
-      });
-    });
+  Future<void> resumeCamera() async {
+    await cameraController.start();
   }
 
   @override
   void dispose() {
-    controller?.dispose();
+    cameraController.dispose();
     super.dispose();
   }
+
+  void _resetScan() {
+    setState(() {
+      _hasScanned = false;
+      _isNavigating = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    const navBarHeight = 96.0;
+
+    return SizedBox(
+      height: screenHeight - navBarHeight,
+      child: Stack(
+        children: [
+          MobileScanner(
+            controller: cameraController,
+            onDetect: (capture) async {
+              if (_hasScanned || _isNavigating) return;
+              final List<Barcode> barcodes = capture.barcodes;
+              if (barcodes.isEmpty) return;
+              final Barcode barcode = barcodes.first;
+              final String? code = barcode.rawValue;
+
+              if (code == null) return;
+
+              _hasScanned = true;
+              _isNavigating = true;
+
+              try {
+                await cameraController.pause();
+
+                final parsed = jsonDecode(code);
+                final scannedId = parsed['order_id'].toString();
+
+                final box = Hive.box<Ticket>('tickets');
+                final match = box.values.any((ticket) => ticket.orderId == scannedId);
+
+                if (!mounted) return;
+
+                await showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: Text(match ? '✅ Ticket Válido' : '❌ Ticket Inválido'),
+                    content: Icon(
+                      match ? Icons.check_circle : Icons.cancel,
+                      color: match ? Colors.green : Colors.red,
+                      size: 80,
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (match) widget.onScan(code);
+              } catch (_) {
+                // Ignore errors
+              } finally {
+                await cameraController.start();
+                _resetScan();
+              }
+            },
+          ),
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _ScannerOverlayPainter(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScannerOverlayPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.black.withOpacity(0.5);
+    final borderPaint = Paint()
+      ..color = Colors.blueGrey
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke;
+
+    final cutOutSize = 250.0;
+    final cutOutRect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: cutOutSize,
+      height: cutOutSize,
+    );
+
+    // Darken outside cutout
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    // Clear cutout with blend mode
+    canvas.saveLayer(cutOutRect, Paint());
+    canvas.drawRect(cutOutRect, Paint()..blendMode = BlendMode.clear);
+    canvas.restore();
+
+    // Draw blue border around cutout
+    canvas.drawRect(cutOutRect, borderPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
