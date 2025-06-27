@@ -45,9 +45,15 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getTab() {
     switch (_selectedIndex) {
       case 0:
-        return HomeTab(scannedCodes: scannedCodes, onClearLast: _clearLastScan);
+        return HomeTab(
+          scannedCodes: scannedCodes,
+          onClearLast: _clearLastScan,
+        );
       case 1:
-        return QRScannerTab(key: qrScannerKey, onScan: _handleQRScan);
+        return QRScannerTab(
+          key: qrScannerKey,
+          onScan: _handleQRScan,
+        );
       case 2:
         return TicketListTab(scannedCodes: scannedCodes);
       default:
@@ -57,14 +63,20 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildNavItem(int index, IconData icon, IconData selectedIcon, double iconSize) {
     final isSelected = _selectedIndex == index;
-    return GestureDetector(
+
+    return InkWell(
       onTap: () => setSelectedIndex(index),
+      borderRadius: BorderRadius.circular(100),
+      splashColor: Colors.deepPurple.withOpacity(0.2),
       child: SizedBox(
-        width: 60,
-        child: Icon(
-          isSelected ? selectedIcon : icon,
-          color: isSelected ? Colors.deepPurple : Colors.white,
-          size: iconSize,
+        width: 90, // narrower than Expanded
+        height: 60,
+        child: Center(
+          child: Icon(
+            isSelected ? selectedIcon : icon,
+            color: isSelected ? Colors.deepPurple : Colors.white,
+            size: iconSize,
+          ),
         ),
       ),
     );
@@ -83,10 +95,12 @@ class _MainScreenState extends State<MainScreen> {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 30),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildNavItem(0, Icons.home_outlined, Icons.home, 32),
+              const SizedBox(width: 16),
               _buildNavItem(1, Icons.qr_code_scanner_outlined, Icons.qr_code_scanner, 28),
+              const SizedBox(width: 16),
               _buildNavItem(2, Icons.list_outlined, Icons.list, 38),
             ],
           ),
