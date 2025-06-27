@@ -114,30 +114,34 @@ class QRScannerTabState extends State<QRScannerTab> {
 class _ScannerOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.black.withOpacity(0.5);
-    final borderPaint = Paint()
-      ..color = Colors.blueGrey
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke;
+    final overlayPaint = Paint()..color = Colors.black.withOpacity(0.5);
+    final clearPaint = Paint()..blendMode = BlendMode.clear;
 
-    final cutOutSize = 250.0;
+    final cutOutSize = 270.0;
+    final borderRadius = Radius.circular(6); // adjust for roundness
+
     final cutOutRect = Rect.fromCenter(
       center: Offset(size.width / 2, size.height / 2),
       width: cutOutSize,
       height: cutOutSize,
     );
 
-    // Darken outside cutout
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    // Clear cutout with blend mode
-    canvas.saveLayer(cutOutRect, Paint());
-    canvas.drawRect(cutOutRect, Paint()..blendMode = BlendMode.clear);
+    final cutOutRRect = RRect.fromRectAndRadius(cutOutRect, borderRadius);
+
+    canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
+
+    // Draw dark overlay
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), overlayPaint);
+
+    // Clear rounded cutout area
+    canvas.drawRRect(cutOutRRect, clearPaint);
+
     canvas.restore();
 
-    // Draw blue border around cutout
-    canvas.drawRect(cutOutRect, borderPaint);
+    // Border removed as requested
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
