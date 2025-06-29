@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/qr_scanner_tab.dart';
 import '../tabs/ticket_list_tab.dart';
+import '../tabs/scanned_tickets_tab.dart'; // <-- Import the new tab
+import '../tabs/sold_tickets_tab.dart'; // <-- Import the new tab
+import '../tabs/car_expo_tab.dart'; // <-- Import the new tab
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,6 +18,8 @@ class _MainScreenState extends State<MainScreen> {
 
   int _selectedIndex = 0;
   List<String> scannedCodes = [];
+
+  late final List<Widget> _tabs;
 
   void _handleQRScan(String code) {
     if (!scannedCodes.contains(code)) {
@@ -42,23 +47,30 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  Widget _getTab() {
-    switch (_selectedIndex) {
-      case 0:
-        return HomeTab(
-          scannedCodes: scannedCodes,
-          onClearLast: _clearLastScan,
-        );
-      case 1:
-        return QRScannerTab(
-          key: qrScannerKey,
-          onScan: _handleQRScan,
-        );
-      case 2:
-        return TicketListTab(scannedCodes: scannedCodes);
-      default:
-        return const SizedBox();
-    }
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      HomeTab(
+        scannedCodes: scannedCodes,
+        onClearLast: _clearLastScan,
+      ),
+      QRScannerTab(
+        key: qrScannerKey,
+        onScan: _handleQRScan,
+      ),
+      Navigator(
+        key: GlobalKey<NavigatorState>(),
+        onGenerateRoute: (settings) {
+          Widget page = TicketListTab(scannedCodes: scannedCodes);
+          if (settings.name == '/scanned') {
+            page = const ScannedTicketsTab();
+          }
+          return MaterialPageRoute(builder: (_) => page, settings: settings);
+        },
+      ),
+      const CarExpoTab(), // <-- Add this line
+    ];
   }
 
   Widget _buildNavItem(int index, IconData icon, IconData selectedIcon, double iconSize) {
@@ -85,7 +97,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _getTab(),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _tabs,
+      ),
       bottomNavigationBar: Container(
         height: 96,
         decoration: const BoxDecoration(
@@ -99,9 +114,9 @@ class _MainScreenState extends State<MainScreen> {
             children: [
               _buildNavItem(0, Icons.home_outlined, Icons.home, 32),
               const SizedBox(width: 16),
-              _buildNavItem(1, Icons.qr_code_scanner_outlined, Icons.qr_code_scanner, 28),
+              _buildNavItem(1, Icons.qr_code_scanner_outlined, Icons.qr_code_scanner, 30),
               const SizedBox(width: 16),
-              _buildNavItem(2, Icons.list_outlined, Icons.list, 38),
+              _buildNavItem(2, Icons.confirmation_num_outlined, Icons.confirmation_num_outlined, 32),
             ],
           ),
         ),
