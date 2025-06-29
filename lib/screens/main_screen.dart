@@ -60,11 +60,14 @@ class _MainScreenState extends State<MainScreen> {
         onScan: _handleQRScan,
       ),
       Navigator(
-        key: GlobalKey<NavigatorState>(),
+        key: GlobalKey<NavigatorState>(), // Unique key for the nested navigator
         onGenerateRoute: (settings) {
           Widget page = TicketListTab(scannedCodes: scannedCodes);
           if (settings.name == '/scanned') {
             page = const ScannedTicketsTab();
+          }
+          if (settings.name == '/sold') {
+            page = const SoldTicketsTab();
           }
           return MaterialPageRoute(builder: (_) => page, settings: settings);
         },
@@ -81,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
       borderRadius: BorderRadius.circular(100),
       splashColor: Colors.deepPurple.withOpacity(0.2),
       child: SizedBox(
-        width: 90, // narrower than Expanded
+        width: 80, // narrower than Expanded
         height: 60,
         child: Center(
           child: Icon(
@@ -113,10 +116,12 @@ class _MainScreenState extends State<MainScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildNavItem(0, Icons.home_outlined, Icons.home, 32),
-              const SizedBox(width: 16),
+              const SizedBox(width: 13),
               _buildNavItem(1, Icons.qr_code_scanner_outlined, Icons.qr_code_scanner, 30),
-              const SizedBox(width: 16),
+              const SizedBox(width: 13),
               _buildNavItem(2, Icons.confirmation_num_outlined, Icons.confirmation_num_outlined, 32),
+              const SizedBox(width: 13),
+              _buildNavItem(3, Icons.style, Icons.style, 32), // Car Expo tab
             ],
           ),
         ),

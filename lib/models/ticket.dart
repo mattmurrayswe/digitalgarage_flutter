@@ -44,16 +44,16 @@ class Ticket extends HiveObject {
   factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
       id: json['id'].toString(),
-      eventName: json['event_name'],
-      customerName: json['customer_name'],
-      email: json['email'],
-      orderId: json['order_id'],
-      amount: json['amount'],
-      ticketName: json['ticket_name'],
-      location: json['location'],
-      address: json['address'],
-      orderDate: json['order_date'],
-      customerId: json['customer_id'], // Added field
+      eventName: json['event_name'].toString(),
+      customerName: json['customer_name'].toString(),
+      email: json['email'].toString(),
+      orderId: json['order_id'].toString(),
+      amount: json['amount'].toString(),
+      ticketName: json['ticket_name'].toString(),
+      location: json['location'].toString(),
+      address: json['address'].toString(),
+      orderDate: json['order_date'].toString(),
+      customerId: json['customer_id'].toString(),
     );
   }
 

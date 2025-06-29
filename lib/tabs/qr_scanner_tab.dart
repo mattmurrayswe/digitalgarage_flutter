@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:hive/hive.dart';
+import '../models/scanned_tickets.dart';
 import '../models/ticket.dart';
 
 class QRScannerTab extends StatefulWidget {
@@ -71,6 +72,24 @@ class QRScannerTabState extends State<QRScannerTab> {
                 final box = Hive.box<Ticket>('tickets');
                 final match = box.values.any((ticket) => ticket.orderId == scannedId);
 
+                if (match) {
+                  final scannedBox = Hive.box<ScannedTickets>('scanned_tickets');
+                  final ticket = Ticket.fromJson(parsed);
+                  // Prevent duplicates in scanned_tickets
+                  if (scannedBox.isEmpty) {
+                    await scannedBox.add(ScannedTickets(tickets: [ticket]));
+                  } else {
+                    final scannedTickets = scannedBox.getAt(0)!;
+                    // Prevent duplicates
+                    if (!scannedTickets.tickets.any((t) => t.orderId == ticket.orderId)) {
+                      scannedTickets.tickets.add(ticket);
+                      await scannedTickets.save();
+                    }
+                  }
+                  print('Ticket saved: ${ticket.orderId}');
+                  widget.onScan(code);
+                }
+
                 if (!mounted) return;
 
                 await showDialog(
@@ -90,9 +109,9 @@ class QRScannerTabState extends State<QRScannerTab> {
                     ],
                   ),
                 );
-
-                if (match) widget.onScan(code);
-              } catch (_) {
+              } catch (e, stack) {
+                print('Error saving ticket: $e');
+                print(stack);
                 // Ignore errors
               } finally {
                 await cameraController.start();
