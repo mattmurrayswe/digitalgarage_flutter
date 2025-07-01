@@ -94,6 +94,53 @@ class CarExpoTab extends StatelessWidget {
     }
   }
 
+  void _showExpandedCard(BuildContext context, Map<String, String> car) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 340,
+                  // Remove fixed padding here, let the card control its own padding
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 24,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: _CarCard(
+                    car: car,
+                    getNeonShadow: getNeonShadow,
+                    expanded: true,
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, size: 28),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
@@ -113,7 +160,6 @@ class CarExpoTab extends StatelessWidget {
         title: const Text(
           'Digital Car Exposition',
         ),
-        // Removed actions with orientation button
       ),
       body: Column(
         children: [
@@ -150,15 +196,21 @@ class CarExpoTab extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 160,
-                      child: _CarCard(car: row[0], getNeonShadow: getNeonShadow),
+                    GestureDetector(
+                      onTap: () => _showExpandedCard(context, row[0]),
+                      child: Container(
+                        width: 160,
+                        child: _CarCard(car: row[0], getNeonShadow: getNeonShadow),
+                      ),
                     ),
                     const SizedBox(width: 22),
                     if (row.length > 1)
-                      Container(
-                        width: 160,
-                        child: _CarCard(car: row[1], getNeonShadow: getNeonShadow),
+                      GestureDetector(
+                        onTap: () => _showExpandedCard(context, row[1]),
+                        child: Container(
+                          width: 160,
+                          child: _CarCard(car: row[1], getNeonShadow: getNeonShadow),
+                        ),
                       ),
                   ],
                 );
@@ -174,8 +226,13 @@ class CarExpoTab extends StatelessWidget {
 class _CarCard extends StatelessWidget {
   final Map<String, String> car;
   final List<BoxShadow> Function(String?) getNeonShadow;
+  final bool expanded;
 
-  const _CarCard({required this.car, required this.getNeonShadow});
+  const _CarCard({
+    required this.car,
+    required this.getNeonShadow,
+    this.expanded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -183,21 +240,25 @@ class _CarCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(expanded ? 6 : 12),
         boxShadow: getNeonShadow(rarity),
       ),
       child: Card(
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(expanded ? 8 : 12)),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: expanded ? 24.0 : 10.0,
+            vertical: expanded ? 20.0 : 8.0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, // <-- Only as tall as content
             children: [
               if (car['instagram'] != null)
                 Row(
                   children: [
-                    Text(car['instagram']!, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                    Text(car['instagram']!, style: TextStyle(color: Colors.white, fontSize: expanded ? 18 : 12)),
                   ],
                 ),
               const SizedBox(height: 4),
@@ -205,24 +266,34 @@ class _CarCard extends StatelessWidget {
                 child: car['image'] != null
                     ? Image.network(
                         car['image']!,
-                        width: 200,
-                        height: 160,
+                        width: expanded ? 320 : 200,
+                        height: expanded ? 340 : 160,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Image.asset('assets/car.png', width: 200, height: 160, fit: BoxFit.cover);
+                          return Image.asset(
+                            'assets/car.png',
+                            width: expanded ? 320 : 200,
+                            height: expanded ? 340 : 160,
+                            fit: BoxFit.cover,
+                          );
                         },
                       )
-                    : Image.asset('assets/car.png', width: 200, height: 160, fit: BoxFit.cover),
+                    : Image.asset(
+                        'assets/car.png',
+                        width: expanded ? 320 : 200,
+                        height: expanded ? 340 : 160,
+                        fit: BoxFit.cover,
+                      ),
               ),
               const SizedBox(height: 8),
-              Text(car['model']!, style: const TextStyle(fontSize: 13)),
+              Text(car['model']!, style: TextStyle(fontSize: expanded ? 22 : 13, fontWeight: expanded ? FontWeight.bold : FontWeight.normal)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(car['brand']!, style: const TextStyle(fontSize: 11)),
+                  Text(car['brand']!, style: TextStyle(fontSize: expanded ? 16 : 11)),
                   Text(
                     car['year']!,
-                    style: const TextStyle(color: Colors.grey, fontSize: 11),
+                    style: TextStyle(color: Colors.grey, fontSize: expanded ? 16 : 11),
                   ),
                 ],
               ),
