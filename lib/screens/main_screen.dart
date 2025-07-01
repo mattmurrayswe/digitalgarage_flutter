@@ -121,7 +121,7 @@ class _MainScreenState extends State<MainScreen> {
               const SizedBox(width: 13),
               _buildNavItem(2, Icons.confirmation_num_outlined, Icons.confirmation_num_outlined, 32),
               const SizedBox(width: 13),
-              _buildNavItem(3, Icons.style, Icons.style, 32), // Car Expo tab
+              _buildNavItem(3, Icons.style_outlined, Icons.style_outlined, 32), // Car Expo tab
             ],
           ),
         ),

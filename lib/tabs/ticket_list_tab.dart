@@ -2,7 +2,6 @@
 
 import 'package:digitalgarage_futter/models/ticket.dart';
 import 'package:digitalgarage_futter/models/scanned_tickets.dart';
-import 'package:digitalgarage_futter/tabs/scanned_tickets_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
