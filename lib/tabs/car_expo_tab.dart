@@ -19,6 +19,22 @@ class CarExpoTab extends StatelessWidget {
       'year': '2021',
       'image': 'https://example.com/honda.jpg',
       'instagram': '@honda_cars',
+      'rarity': 'uncommon',
+    },
+    {
+      'brand': 'Ford',
+      'model': 'Mustang',
+      'year': '2023',
+      'image': 'https://example.com/ford.jpg',
+      'instagram': '@fordperformance',
+      'rarity': 'uncommon',
+    },
+    {
+      'brand': 'Lamborghini',
+      'model': 'Aventador',
+      'year': '2024',
+      'image': 'https://example.com/lamborghini.jpg',
+      'instagram': '@lamborghini',
       'rarity': 'rare',
     },
     {
@@ -27,7 +43,7 @@ class CarExpoTab extends StatelessWidget {
       'year': '2023',
       'image': 'https://example.com/ford.jpg',
       'instagram': '@fordperformance',
-      'rarity': 'epic',
+      'rarity': 'rare',
     },
     {
       'brand': 'Lamborghini',
@@ -35,23 +51,7 @@ class CarExpoTab extends StatelessWidget {
       'year': '2024',
       'image': 'https://example.com/lamborghini.jpg',
       'instagram': '@lamborghini',
-      'rarity': 'legendary',
-    },
-    {
-      'brand': 'Ford',
-      'model': 'Mustang',
-      'year': '2023',
-      'image': 'https://example.com/ford.jpg',
-      'instagram': '@fordperformance',
       'rarity': 'epic',
-    },
-    {
-      'brand': 'Lamborghini',
-      'model': 'Aventador',
-      'year': '2024',
-      'image': 'https://example.com/lamborghini.jpg',
-      'instagram': '@lamborghini',
-      'rarity': 'legendary',
     },
     // ...more cars...
   ];
@@ -100,40 +100,40 @@ class CarExpoTab extends StatelessWidget {
       barrierDismissible: true,
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+        insetPadding: const EdgeInsets.all(24),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
           children: [
-            Stack(
-              children: [
-                Container(
-                  width: 340,
-                  // Remove fixed padding here, let the card control its own padding
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 24,
-                        spreadRadius: 2,
-                      ),
-                    ],
+            Container(
+              width: 340,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 24,
+                    spreadRadius: 2,
                   ),
-                  child: _CarCard(
-                    car: car,
-                    getNeonShadow: getNeonShadow,
-                    expanded: true,
-                  ),
+                ],
+              ),
+              child: _CarCard(
+                car: car,
+                getNeonShadow: getNeonShadow,
+                expanded: true,
+              ),
+            ),
+            Positioned(
+              top: -36, // Slightly above the card
+              right: -8,
+              child: Material(
+                color: Colors.transparent,
+                child: IconButton(
+                  icon: const Icon(Icons.close, size: 32, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, size: 28),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),
@@ -199,7 +199,7 @@ class CarExpoTab extends StatelessWidget {
                     GestureDetector(
                       onTap: () => _showExpandedCard(context, row[0]),
                       child: Container(
-                        width: 160,
+                        width: 169,
                         child: _CarCard(car: row[0], getNeonShadow: getNeonShadow),
                       ),
                     ),
@@ -208,7 +208,7 @@ class CarExpoTab extends StatelessWidget {
                       GestureDetector(
                         onTap: () => _showExpandedCard(context, row[1]),
                         child: Container(
-                          width: 160,
+                          width: 169,
                           child: _CarCard(car: row[1], getNeonShadow: getNeonShadow),
                         ),
                       ),
@@ -240,53 +240,70 @@ class _CarCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(expanded ? 6 : 12),
+        borderRadius: BorderRadius.circular(expanded ? 6 : 6),
         boxShadow: getNeonShadow(rarity),
       ),
       child: Card(
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(expanded ? 8 : 12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(expanded ? 8 : 6)),
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: expanded ? 24.0 : 10.0,
-            vertical: expanded ? 20.0 : 8.0,
+          padding: EdgeInsets.only(
+            left: expanded ? 24.0 : 12.0,
+            right: expanded ? 24.0 : 12.0,
+            top: expanded ? 24.0 : 8.0,
+            bottom: expanded ? 26.0 : 8.0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min, // <-- Only as tall as content
+            mainAxisSize: MainAxisSize.min,
             children: [
-              if (car['instagram'] != null)
+              if (car['instagram'] != null) ...[
+                Text(
+                  'Instagram',
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontWeight: FontWeight.bold,
+                    fontSize: expanded ? 12 : 8,
+                  ),
+                ),
                 Row(
                   children: [
-                    Text(car['instagram']!, style: TextStyle(color: Colors.white, fontSize: expanded ? 18 : 12)),
+                    Text(
+                      car['instagram']!,
+                      style: TextStyle(color: Colors.white, fontSize: expanded ? 16 : 10),
+                    ),
                   ],
                 ),
+              ],
               const SizedBox(height: 4),
               Center(
-                child: car['image'] != null
-                    ? Image.network(
-                        car['image']!,
-                        width: expanded ? 320 : 200,
-                        height: expanded ? 340 : 160,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/car.png',
-                            width: expanded ? 320 : 200,
-                            height: expanded ? 340 : 160,
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      )
-                    : Image.asset(
-                        'assets/car.png',
-                        width: expanded ? 320 : 200,
-                        height: expanded ? 340 : 160,
-                        fit: BoxFit.cover,
-                      ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(expanded ? 4 : 2), // Adjust as needed
+                  child: car['image'] != null
+                      ? Image.network(
+                          car['image']!,
+                          width: expanded ? 320 : 200,
+                          height: expanded ? 340 : 160,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/car.png',
+                              width: expanded ? 320 : 200,
+                              height: expanded ? 340 : 160,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          'assets/car.png',
+                          width: expanded ? 320 : 200,
+                          height: expanded ? 340 : 160,
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
               const SizedBox(height: 8),
-              Text(car['model']!, style: TextStyle(fontSize: expanded ? 22 : 13, fontWeight: expanded ? FontWeight.bold : FontWeight.normal)),
+              Text(car['model']!, style: TextStyle(fontSize: expanded ? 22 : 12, fontWeight: expanded ? FontWeight.w400 : FontWeight.normal)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
