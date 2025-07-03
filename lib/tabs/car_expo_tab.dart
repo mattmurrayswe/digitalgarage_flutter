@@ -50,19 +50,19 @@ class _CarExpoTabState extends State<CarExpoTab> {
   List<BoxShadow> getNeonShadow(String? rarity) {
     switch (rarity) {
       case 'rare':
-        return [BoxShadow(color: Colors.blue, blurRadius: 14, spreadRadius: 1)];
+        return [BoxShadow(color: Colors.blue, blurRadius: 10, spreadRadius: 3)];
       case 'epic':
         return [
-          BoxShadow(color: Colors.purple, blurRadius: 14, spreadRadius: 1),
+          BoxShadow(color: Colors.purple, blurRadius: 10, spreadRadius: 3),
         ];
       case 'legendary':
         return [
-          BoxShadow(color: Colors.orange, blurRadius: 14, spreadRadius: 1),
+          BoxShadow(color: Colors.orange, blurRadius: 10, spreadRadius: 3),
         ];
       case 'uncommon':
       default:
         return [
-          BoxShadow(color: Colors.white, blurRadius: 14, spreadRadius: 1),
+          BoxShadow(color: Colors.white, blurRadius: 10, spreadRadius: 3),
         ];
     }
   }
