@@ -1,60 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 
-class CarExpoTab extends StatelessWidget {
+class CarExpoTab extends StatefulWidget {
   const CarExpoTab({super.key});
 
-  final List<Map<String, String>> cars = const [
-    {
-      'brand': 'Toyota',
-      'model': 'Corolla',
-      'year': '2022',
-      'image': 'https://example.com/toyota.jpg',
-      'instagram': '@toyota_official',
-      'rarity': 'uncommon',
-    },
-    {
-      'brand': 'Honda',
-      'model': 'Civic',
-      'year': '2021',
-      'image': 'https://example.com/honda.jpg',
-      'instagram': '@honda_cars',
-      'rarity': 'uncommon',
-    },
-    {
-      'brand': 'Ford',
-      'model': 'Mustang',
-      'year': '2023',
-      'image': 'https://example.com/ford.jpg',
-      'instagram': '@fordperformance',
-      'rarity': 'uncommon',
-    },
-    {
-      'brand': 'Lamborghini',
-      'model': 'Aventador',
-      'year': '2024',
-      'image': 'https://example.com/lamborghini.jpg',
-      'instagram': '@lamborghini',
-      'rarity': 'rare',
-    },
-    {
-      'brand': 'Ford',
-      'model': 'Mustang',
-      'year': '2023',
-      'image': 'https://example.com/ford.jpg',
-      'instagram': '@fordperformance',
-      'rarity': 'rare',
-    },
-    {
-      'brand': 'Lamborghini',
-      'model': 'Aventador',
-      'year': '2024',
-      'image': 'https://example.com/lamborghini.jpg',
-      'instagram': '@lamborghini',
-      'rarity': 'epic',
-    },
-    // ...more cars...
-  ];
+  @override
+  State<CarExpoTab> createState() => _CarExpoTabState();
+}
+
+class _CarExpoTabState extends State<CarExpoTab> {
+  late Future<List<Map<String, String>>> _futureCars;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureCars = fetchCars();
+  }
+
+  Future<List<Map<String, String>>> fetchCars() async {
+    final response = await http.get(Uri.parse('https://digitalgarage.com.br/api/digital-expo'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List projects = data['projects'];
+      return projects.map<Map<String, String>>((json) {
+        return {
+          'brand': json['marca'] ?? '',
+          'model': json['modelo'] ?? '',
+          'year': json['ano']?.toString() ?? '',
+          // Prefer webp if available, fallback to jpg
+          'image': (json['image_project_webp'] != null && json['image_project_webp'].toString().isNotEmpty)
+              ? 'https://digitalgarage.com.br/storage/webp/${json['image_project_webp']}'
+              : 'https://digitalgarage.com.br/storage/${json['image_project']}',
+          'instagram': json['arroba_projeto'] ?? json['nome_projeto'] ?? '',
+          'rarity': json['rarity'] ?? 'uncommon',
+        };
+      }).toList();
+    } else {
+      throw Exception('Failed to load cars');
+    }
+  }
 
   List<BoxShadow> getNeonShadow(String? rarity) {
     switch (rarity) {
@@ -125,7 +112,7 @@ class CarExpoTab extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: -36, // Slightly above the card
+              top: -36,
               right: -8,
               child: Material(
                 color: Colors.transparent,
@@ -145,21 +132,9 @@ class CarExpoTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
-    // Create pairs of cars for each row (2 per row)
-    final List<List<Map<String, String>>> carRows = [];
-    for (int i = 0; i < cars.length; i += 2) {
-      if (i + 1 < cars.length) {
-        carRows.add([cars[i], cars[i + 1]]);
-      } else {
-        carRows.add([cars[i]]);
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Digital Car Exposition',
-        ),
+        title: const Text('Digital Car Exposition'),
       ),
       body: Column(
         children: [
@@ -187,32 +162,54 @@ class CarExpoTab extends StatelessWidget {
             ],
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.only(top: 16),
-              itemCount: carRows.length,
-              itemBuilder: (context, rowIndex) {
-                final row = carRows[rowIndex];
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => _showExpandedCard(context, row[0]),
-                      child: Container(
-                        width: 169,
-                        child: _CarCard(car: row[0], getNeonShadow: getNeonShadow),
-                      ),
-                    ),
-                    const SizedBox(width: 22),
-                    if (row.length > 1)
-                      GestureDetector(
-                        onTap: () => _showExpandedCard(context, row[1]),
-                        child: Container(
-                          width: 169,
-                          child: _CarCard(car: row[1], getNeonShadow: getNeonShadow),
+            child: FutureBuilder<List<Map<String, String>>>(
+              future: _futureCars,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No cars found.'));
+                }
+                final cars = snapshot.data!;
+                // Create pairs of cars for each row (2 per row)
+                final List<List<Map<String, String>>> carRows = [];
+                for (int i = 0; i < cars.length; i += 2) {
+                  if (i + 1 < cars.length) {
+                    carRows.add([cars[i], cars[i + 1]]);
+                  } else {
+                    carRows.add([cars[i]]);
+                  }
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.only(top: 16),
+                  itemCount: carRows.length,
+                  itemBuilder: (context, rowIndex) {
+                    final row = carRows[rowIndex];
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _showExpandedCard(context, row[0]),
+                          child: SizedBox(
+                            width: 169,
+                            child: _CarCard(car: row[0], getNeonShadow: getNeonShadow),
+                          ),
                         ),
-                      ),
-                  ],
+                        const SizedBox(width: 22),
+                        if (row.length > 1)
+                          GestureDetector(
+                            onTap: () => _showExpandedCard(context, row[1]),
+                            child: SizedBox(
+                              width: 169,
+                              child: _CarCard(car: row[1], getNeonShadow: getNeonShadow),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 );
               },
             ),
@@ -257,7 +254,7 @@ class _CarCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (car['instagram'] != null) ...[
+              if (car['instagram'] != null && car['instagram']!.isNotEmpty) ...[
                 Text(
                   'Instagram',
                   style: TextStyle(
@@ -278,21 +275,25 @@ class _CarCard extends StatelessWidget {
               const SizedBox(height: 4),
               Center(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(expanded ? 4 : 2), // Adjust as needed
+                  borderRadius: BorderRadius.circular(expanded ? 4 : 2),
                   child: car['image'] != null
-                      ? Image.network(
-                          car['image']!,
+                      ? CachedNetworkImage(
+                          imageUrl: car['image']!,
                           width: expanded ? 320 : 200,
                           height: expanded ? 340 : 160,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              'assets/car.png',
-                              width: expanded ? 320 : 200,
-                              height: expanded ? 340 : 160,
-                              fit: BoxFit.cover,
-                            );
-                          },
+                          placeholder: (context, url) => Container(
+                            width: expanded ? 320 : 200,
+                            height: expanded ? 340 : 160,
+                            color: Colors.grey[900],
+                            child: const Center(child: CircularProgressIndicator()),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/car.png',
+                            width: expanded ? 320 : 200,
+                            height: expanded ? 340 : 160,
+                            fit: BoxFit.cover,
+                          ),
                         )
                       : Image.asset(
                           'assets/car.png',
@@ -303,13 +304,13 @@ class _CarCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(car['model']!, style: TextStyle(fontSize: expanded ? 22 : 12, fontWeight: expanded ? FontWeight.w400 : FontWeight.normal)),
+              Text(car['model'] ?? '', style: TextStyle(fontSize: expanded ? 22 : 12, fontWeight: expanded ? FontWeight.w400 : FontWeight.normal)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(car['brand']!, style: TextStyle(fontSize: expanded ? 16 : 11)),
+                  Text(car['brand'] ?? '', style: TextStyle(fontSize: expanded ? 16 : 11)),
                   Text(
-                    car['year']!,
+                    car['year'] ?? '',
                     style: TextStyle(color: Colors.grey, fontSize: expanded ? 16 : 11),
                   ),
                 ],
