@@ -19,11 +19,12 @@ class HomeTab extends StatelessWidget {
       appBar: const LogoAppBar(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [Color(0xFF070707), Colors.black],
-          ),
+          color: Colors.black,
+          // gradient: LinearGradient(
+          //   begin: Alignment.centerLeft,
+          //   end: Alignment.centerRight,
+          //   colors: [Color(0xFF070707), Colors.black],
+          // ),
         ),
         child: Center(
           child: Column(

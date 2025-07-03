@@ -122,13 +122,23 @@ class _CarExpoTabState extends State<CarExpoTab> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 80,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [Color(0xFF070707), Colors.black],
+            ),
+            border: Border(
+              bottom: BorderSide(color: Colors.white10),
+            ),
+          ),
+        ),
+        toolbarHeight: 90,
         title: Padding(
           padding: const EdgeInsets.only(
             left: 12.0,
-            right: 12.0,
-            top: 22.0,
-            bottom: 22.0,
+            right: 12.0
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -275,7 +285,8 @@ class _CarCard extends StatelessWidget {
         ),
       ),
       child: Card(
-        color: Colors.transparent, // Make Card background transparent to show gradient
+        color: Colors
+            .transparent, // Make Card background transparent to show gradient
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(expanded ? 8 : 6),

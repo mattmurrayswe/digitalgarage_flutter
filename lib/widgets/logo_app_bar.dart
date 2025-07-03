@@ -22,11 +22,8 @@ class LogoAppBar extends StatelessWidget implements PreferredSizeWidget {
             end: Alignment.centerRight,
             colors: [Color(0xFF070707), Colors.black],
           ),
+          border: Border(bottom: BorderSide(color: Colors.white10)),
         ),
-      ),
-      bottom: const PreferredSize(
-        preferredSize: Size.fromHeight(1),
-        child: Divider(height: 1, color: Color(0xFF0C0C0C)),
       ),
     );
   }

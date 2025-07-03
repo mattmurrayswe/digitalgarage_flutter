@@ -107,7 +107,11 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: Container(
         height: 96,
         decoration: const BoxDecoration(
-          color: Colors.black,
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Color(0xFF070707), Colors.black],
+          ),
           border: Border(top: BorderSide(color: Colors.white10)),
         ),
         child: Padding(
