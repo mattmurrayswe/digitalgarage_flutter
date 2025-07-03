@@ -32,9 +32,9 @@ class HomeTab extends StatelessWidget {
             children: [
               SizedBox(height: 40),
               Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30),
+                padding: const EdgeInsets.only(left: 35, right: 35),
                 child: Container(
-                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  padding: const EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomLeft,
@@ -46,15 +46,24 @@ class HomeTab extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Center(
-                    child: Text(
-                      'Organizador de Eventos',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Icon(
+                        Icons.festival_outlined,
+                        size: 30,
                         color: Colors.white,
                       ),
-                    ),
+                      Text(
+                        'Eventos',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'Righteous',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
