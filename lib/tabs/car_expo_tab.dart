@@ -21,7 +21,9 @@ class _CarExpoTabState extends State<CarExpoTab> {
   }
 
   Future<List<Map<String, String>>> fetchCars() async {
-    final response = await http.get(Uri.parse('https://digitalgarage.com.br/api/digital-expo'));
+    final response = await http.get(
+      Uri.parse('https://digitalgarage.com.br/api/digital-expo'),
+    );
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List projects = data['projects'];
@@ -31,7 +33,9 @@ class _CarExpoTabState extends State<CarExpoTab> {
           'model': json['modelo'] ?? '',
           'year': json['ano']?.toString() ?? '',
           // Prefer webp if available, fallback to jpg
-          'image': (json['image_project_webp'] != null && json['image_project_webp'].toString().isNotEmpty)
+          'image':
+              (json['image_project_webp'] != null &&
+                  json['image_project_webp'].toString().isNotEmpty)
               ? 'https://digitalgarage.com.br/storage/webp/${json['image_project_webp']}'
               : 'https://digitalgarage.com.br/storage/${json['image_project']}',
           'instagram': json['arroba_projeto'] ?? json['nome_projeto'] ?? '',
@@ -46,37 +50,19 @@ class _CarExpoTabState extends State<CarExpoTab> {
   List<BoxShadow> getNeonShadow(String? rarity) {
     switch (rarity) {
       case 'rare':
-        return [
-          BoxShadow(
-            color: Colors.blue,
-            blurRadius: 14,
-            spreadRadius: 1,
-          ),
-        ];
+        return [BoxShadow(color: Colors.blue, blurRadius: 14, spreadRadius: 1)];
       case 'epic':
         return [
-          BoxShadow(
-            color: Colors.purple,
-            blurRadius: 14,
-            spreadRadius: 1,
-          ),
+          BoxShadow(color: Colors.purple, blurRadius: 14, spreadRadius: 1),
         ];
       case 'legendary':
         return [
-          BoxShadow(
-            color: Colors.orange,
-            blurRadius: 14,
-            spreadRadius: 1,
-          ),
+          BoxShadow(color: Colors.orange, blurRadius: 14, spreadRadius: 1),
         ];
       case 'uncommon':
       default:
         return [
-          BoxShadow(
-            color: Colors.white,
-            blurRadius: 14,
-            spreadRadius: 1,
-          ),
+          BoxShadow(color: Colors.white, blurRadius: 14, spreadRadius: 1),
         ];
     }
   }
@@ -85,6 +71,7 @@ class _CarExpoTabState extends State<CarExpoTab> {
     showDialog(
       context: context,
       barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.9),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.all(24),
@@ -130,37 +117,70 @@ class _CarExpoTabState extends State<CarExpoTab> {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Digital Car Exposition'),
-      ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: Icon(isLandscape ? Icons.screen_lock_rotation : Icons.screen_rotation_alt),
-                tooltip: isLandscape ? 'Rotate to vertical' : 'Rotate to horizontal',
-                onPressed: () {
-                  if (isLandscape) {
-                    SystemChrome.setPreferredOrientations([
-                      DeviceOrientation.portraitUp,
-                      DeviceOrientation.portraitDown,
-                    ]);
-                  } else {
-                    SystemChrome.setPreferredOrientations([
-                      DeviceOrientation.landscapeLeft,
-                      DeviceOrientation.landscapeRight,
-                    ]);
-                  }
-                },
+        toolbarHeight: 80,
+        title: Padding(
+          padding: const EdgeInsets.only(
+            left: 12.0,
+            right: 12.0,
+            top: 22.0,
+            bottom: 22.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'Digital Expo',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Righteous',
+                ),
               ),
-              const SizedBox(width: 12),
+              Icon(
+                Icons.storefront,
+                size: 32,
+              ), // Replace with any icon you want
             ],
           ),
+        ),
+      ),
+
+      body: Column(
+        children: [
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   children: [
+          //     IconButton(
+          //       icon: Icon(
+          //         isLandscape
+          //             ? Icons.screen_lock_rotation
+          //             : Icons.screen_rotation_alt,
+          //       ),
+          //       tooltip: isLandscape
+          //           ? 'Rotate to vertical'
+          //           : 'Rotate to horizontal',
+          //       onPressed: () {
+          //         if (isLandscape) {
+          //           SystemChrome.setPreferredOrientations([
+          //             DeviceOrientation.portraitUp,
+          //             DeviceOrientation.portraitDown,
+          //           ]);
+          //         } else {
+          //           SystemChrome.setPreferredOrientations([
+          //             DeviceOrientation.landscapeLeft,
+          //             DeviceOrientation.landscapeRight,
+          //           ]);
+          //         }
+          //       },
+          //     ),
+          //     const SizedBox(width: 12),
+          //   ],
+          // ),
           Expanded(
             child: FutureBuilder<List<Map<String, String>>>(
               future: _futureCars,
@@ -195,7 +215,10 @@ class _CarExpoTabState extends State<CarExpoTab> {
                           onTap: () => _showExpandedCard(context, row[0]),
                           child: SizedBox(
                             width: 169,
-                            child: _CarCard(car: row[0], getNeonShadow: getNeonShadow),
+                            child: _CarCard(
+                              car: row[0],
+                              getNeonShadow: getNeonShadow,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 22),
@@ -204,7 +227,10 @@ class _CarExpoTabState extends State<CarExpoTab> {
                             onTap: () => _showExpandedCard(context, row[1]),
                             child: SizedBox(
                               width: 169,
-                              child: _CarCard(car: row[1], getNeonShadow: getNeonShadow),
+                              child: _CarCard(
+                                car: row[1],
+                                getNeonShadow: getNeonShadow,
+                              ),
                             ),
                           ),
                       ],
@@ -239,14 +265,25 @@ class _CarCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(expanded ? 6 : 6),
         boxShadow: getNeonShadow(rarity),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.fromARGB(255, 13, 13, 14),
+            Color.fromARGB(255, 8, 8, 8),
+          ],
+        ),
       ),
       child: Card(
+        color: Colors.transparent, // Make Card background transparent to show gradient
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(expanded ? 8 : 6)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(expanded ? 8 : 6),
+        ),
         child: Padding(
           padding: EdgeInsets.only(
-            left: expanded ? 24.0 : 12.0,
-            right: expanded ? 24.0 : 12.0,
+            left: expanded ? 20.0 : 10.0,
+            right: expanded ? 20.0 : 10.0,
             top: expanded ? 24.0 : 8.0,
             bottom: expanded ? 26.0 : 8.0,
           ),
@@ -258,16 +295,19 @@ class _CarCard extends StatelessWidget {
                 Text(
                   'Instagram',
                   style: TextStyle(
-                    color: Colors.white54,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.white70,
+                    fontWeight: FontWeight.w600,
                     fontSize: expanded ? 12 : 8,
                   ),
                 ),
                 Row(
                   children: [
                     Text(
-                      car['instagram']!,
-                      style: TextStyle(color: Colors.white, fontSize: expanded ? 16 : 10),
+                      '@${car['instagram']}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: expanded ? 16 : 10,
+                      ),
                     ),
                   ],
                 ),
@@ -280,18 +320,29 @@ class _CarCard extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: car['image']!,
                           width: expanded ? 320 : 200,
-                          height: expanded ? 340 : 160,
+                          height: expanded ? 350 : 160,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
                             width: expanded ? 320 : 200,
-                            height: expanded ? 340 : 160,
-                            color: Colors.grey[900],
-                            child: const Center(child: CircularProgressIndicator()),
+                            height: expanded ? 350 : 160,
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color.fromARGB(255, 13, 13, 14),
+                                  Color.fromARGB(255, 8, 8, 8),
+                                ],
+                              ),
+                            ),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
                           errorWidget: (context, url, error) => Image.asset(
                             'assets/car.png',
                             width: expanded ? 320 : 200,
-                            height: expanded ? 340 : 160,
+                            height: expanded ? 350 : 160,
                             fit: BoxFit.cover,
                           ),
                         )
@@ -304,14 +355,29 @@ class _CarCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(car['model'] ?? '', style: TextStyle(fontSize: expanded ? 22 : 12, fontWeight: expanded ? FontWeight.w400 : FontWeight.normal)),
+              Text(
+                car['model'] ?? '',
+                style: TextStyle(
+                  fontSize: expanded ? 22 : 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(car['brand'] ?? '', style: TextStyle(fontSize: expanded ? 16 : 11)),
+                  Text(
+                    car['brand'] ?? '',
+                    style: TextStyle(
+                      fontSize: expanded ? 16 : 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   Text(
                     car['year'] ?? '',
-                    style: TextStyle(color: Colors.grey, fontSize: expanded ? 16 : 11),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: expanded ? 16 : 11,
+                    ),
                   ),
                 ],
               ),
