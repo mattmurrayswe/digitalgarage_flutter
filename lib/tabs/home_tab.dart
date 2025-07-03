@@ -28,25 +28,37 @@ class HomeTab extends StatelessWidget {
         ),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Text('Welcome to digitalgarage.com.br App'),
-              const SizedBox(height: 20),
-              if (lastCode != null) ...[
-                Text(
-                  'Last scanned: $lastCode',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        Color.fromARGB(255, 255, 209, 71),
+                        const Color.fromARGB(255, 222, 6, 193),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Organizador de Eventos',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: onClearLast,
-                  child: const Text('Clear Last Scanned'),
-                ),
-              ] else
-                const Text('No QR code scanned yet'),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
