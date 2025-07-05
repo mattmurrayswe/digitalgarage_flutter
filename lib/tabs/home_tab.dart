@@ -1,5 +1,5 @@
+import 'package:digitalgarage_futter/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import '../widgets/logo_app_bar.dart';
 
 class HomeTab extends StatelessWidget {
   final List<String> scannedCodes;
@@ -13,10 +13,52 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lastCode = scannedCodes.isNotEmpty ? scannedCodes.last : null;
+    // final lastCode = scannedCodes.isNotEmpty ? scannedCodes.last : null;
 
     return Scaffold(
-      appBar: const LogoAppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        toolbarHeight: 110,
+        leadingWidth: 130,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 26.0),
+          child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+        ),
+        title: const Text(''), // leave empty or use Spacer
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: TextButton(
+              onPressed: () async {
+                await AuthService.logout();
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/login');
+                }
+              },
+              child: const Text(
+                'LOGOUT',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [Color(0xFF070707), Colors.black],
+            ),
+            border: Border(bottom: BorderSide(color: Colors.white10)),
+          ),
+        ),
+      ),
+
       body: Container(
         decoration: const BoxDecoration(
           color: Colors.black,
@@ -30,11 +72,16 @@ class HomeTab extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 50),
               Padding(
                 padding: const EdgeInsets.only(left: 35, right: 35),
                 child: Container(
-                  padding: const EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomLeft,
