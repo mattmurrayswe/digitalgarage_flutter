@@ -29,20 +29,18 @@ class HomeTab extends StatelessWidget {
         title: const Text(''), // leave empty or use Spacer
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: TextButton(
+            padding: const EdgeInsets.only(right: 26.0),
+            child: IconButton(
               onPressed: () async {
                 await AuthService.logout();
                 if (context.mounted) {
                   Navigator.pushReplacementNamed(context, '/login');
                 }
               },
-              child: const Text(
-                'LOGOUT',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white,
+                size: 30,
               ),
             ),
           ),

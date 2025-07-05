@@ -1,11 +1,11 @@
 import 'package:digitalgarage_futter/screens/login_screen.dart';
-import 'package:digitalgarage_futter/screens/main_screen.dart';
+import 'package:digitalgarage_futter/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
+  @override       
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter QR Demo',
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const MainScreen(),
+      home: const SplashScreen(),
       routes: {
         '/login': (context) => const LoginScreen(),
       },
