@@ -1,4 +1,5 @@
 import 'package:digitalgarage_futter/screens/login_screen.dart';
+import 'package:digitalgarage_futter/screens/login_screen_code.dart';
 import 'package:digitalgarage_futter/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
       routes: {
-        '/login': (context) => const LoginScreen(),
+        '/login': (context) => const LoginScreenCode(),
       },
     );
   }

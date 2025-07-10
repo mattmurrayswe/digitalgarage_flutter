@@ -1,3 +1,4 @@
+import 'package:digitalgarage_futter/screens/login_screen_code.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'main_screen.dart';
@@ -24,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => loggedIn ? const MainScreen() : const LoginScreen(),
+        builder: (_) => loggedIn ? const MainScreen() : const LoginScreenCode(),
       ),
     );
   }

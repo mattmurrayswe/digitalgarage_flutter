@@ -12,6 +12,11 @@ class AuthService {
     isLoggedIn = true;
   }
 
+  static Future<void> loginCode(String code) async {
+    print('Code: $code');
+    isLoggedIn = true;
+  }
+
   static Future<void> logout() async {
     isLoggedIn = false;
   }
