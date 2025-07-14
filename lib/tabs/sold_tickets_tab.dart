@@ -11,7 +11,7 @@ class SoldTicketsTab extends StatelessWidget {
     final tickets = box.values.toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sold Tickets')),
+      appBar: AppBar(title: const Text('Sold Tickets', style: TextStyle(fontFamily: 'Righteous'))),
       body: ListView.builder(
         itemCount: tickets.length,
         itemBuilder: (context, index) {

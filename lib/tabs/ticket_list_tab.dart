@@ -170,7 +170,44 @@ class _TicketListTabState extends State<TicketListTab> {
     final buttonWidth = 200.0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Ticket Status')),
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [Color(0xFF070707), Colors.black],
+            ),
+            border: Border(
+              bottom: BorderSide(color: Colors.white10),
+            ),
+          ),
+        ),
+        toolbarHeight: 90,
+        title: Padding(
+          padding: const EdgeInsets.only(
+            left: 12.0,
+            right: 12.0
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'Ticket Stats',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Righteous',
+                ),
+              ),
+              Icon(
+                Icons.confirmation_num_outlined,
+                size: 32,
+              ), // Replace with any icon you want
+            ],
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -192,7 +229,7 @@ class _TicketListTabState extends State<TicketListTab> {
                       label: 'Total',
                       value: '$total',
                       icon: Icons.confirmation_number_outlined,
-                      color: Colors.orange
+                      color: Colors.grey
                     ),
                     const SizedBox(width: 10),
                     _infoCard(

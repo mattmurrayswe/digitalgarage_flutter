@@ -23,7 +23,7 @@ class _ScannedTicketsTabState extends State<ScannedTicketsTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scanned Tickets'),
+        title: const Text('Scanned Tickets', style: TextStyle(fontFamily: 'Righteous')),
         // The back button appears automatically if this page is pushed
       ),
       body: ValueListenableBuilder(
