@@ -67,13 +67,13 @@ class HomeTab extends StatelessWidget {
           // ),
         ),
         child: Center(
-          child: Column(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(height: 50),
-              Padding(
-                padding: const EdgeInsets.only(left: 35, right: 35),
-                child: Container(
+              Container(
                   padding: const EdgeInsets.only(
                     top: 20,
                     bottom: 20,
@@ -111,10 +111,21 @@ class HomeTab extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
               const SizedBox(height: 20),
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white60
+                    ),
+                    child: Text('Arraia JDM Experience', style: (TextStyle(color: Colors.white))),
+                  )
+                ],
+              )
             ],
           ),
+          )
         ),
       ),
     );
