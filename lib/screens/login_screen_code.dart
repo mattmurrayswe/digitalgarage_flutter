@@ -27,6 +27,7 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
   final _formKey = GlobalKey<FormState>();
   final _codeController = TextEditingController();
   final FocusNode _eventCodeFocusNode = FocusNode();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -45,12 +46,24 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
 
   void _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      await AuthService.loginCode(_codeController.text.trim());
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MainScreen()),
-      );
+      setState(() => _isLoading = true);
+
+      try {
+        await AuthService.loginCode(_codeController.text.trim());
+        if (!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainScreen()),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', '')), backgroundColor: Colors.red),
+        );
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -65,7 +78,8 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.manual,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: IntrinsicHeight(
@@ -73,7 +87,7 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SizedBox(height: 190),
+                          const SizedBox(height: 190),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
@@ -95,7 +109,10 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
                               child: Column(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                      horizontal: 16,
+                                    ),
                                     decoration: const BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(color: Colors.white10),
@@ -164,38 +181,47 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
-                                            Container(
-                                              decoration: const BoxDecoration(
-                                                border: Border(
-                                                  bottom: BorderSide(color: Colors.white, width: 1),
-                                                ),
-                                              ),
-                                              child: ElevatedButton(
-                                                onPressed: _handleLogin,
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.transparent,
-                                                  shadowColor: Colors.transparent,
-                                                  elevation: 0,
-                                                  padding: const EdgeInsets.only(top: 4, bottom: 0),
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: const [
-                                                    Icon(Icons.login, color: Colors.white),
-                                                    SizedBox(width: 8),
-                                                    Text(
-                                                      'Login',
-                                                      style: TextStyle(
-                                                        fontWeight: FontWeight.w600,
-                                                        fontSize: 18,
-                                                        color: Colors.white,
+                                            _isLoading
+                                                ? const SizedBox(
+                                                    width: 28,
+                                                    height: 28,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 3,
+                                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    decoration: const BoxDecoration(
+                                                      border: Border(
+                                                        bottom: BorderSide(color: Colors.white, width: 1),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 6),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                                    child: ElevatedButton(
+                                                      onPressed: _handleLogin,
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Colors.transparent,
+                                                        shadowColor: Colors.transparent,
+                                                        elevation: 0,
+                                                        padding: const EdgeInsets.only(top: 4, bottom: 0),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: const [
+                                                          Icon(Icons.login, color: Colors.white),
+                                                          SizedBox(width: 8),
+                                                          Text(
+                                                            'Login',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: 18,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 6),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
                                           ],
                                         ),
                                       ],
@@ -222,13 +248,13 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(Icons.info_outline, color: Colors.white30, size: 32),
+                                const Icon(Icons.info_outline, color: Colors.white30, size: 32),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Text(
                                     'O código do evento é fornecido por um representante da digitalgarage.com.br após a configuração do evento.',
                                     textAlign: TextAlign.end,
-                                    style: TextStyle(color: Colors.white30, fontSize: 14),
+                                    style: const TextStyle(color: Colors.white30, fontSize: 14),
                                   ),
                                 ),
                               ],
@@ -251,13 +277,13 @@ class _LoginScreenCodeState extends State<LoginScreenCode> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Icon(Icons.support_agent_outlined, color: Colors.white30, size: 32),
+                                const Icon(Icons.support_agent_outlined, color: Colors.white30, size: 32),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Text(
                                     'Instagram: @digitalgarage.com.br\nEmail: support@digitalgarage.com.br',
                                     textAlign: TextAlign.end,
-                                    style: TextStyle(color: Colors.white30, fontSize: 14),
+                                    style: const TextStyle(color: Colors.white30, fontSize: 14),
                                   ),
                                 ),
                               ],
