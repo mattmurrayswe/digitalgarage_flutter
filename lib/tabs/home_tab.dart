@@ -161,7 +161,7 @@ class HomeTab extends StatelessWidget {
                       margin: const EdgeInsets.only(right: 6),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
+                        color: Color.fromARGB(255, 244, 201, 70),
                       ),
                       child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -170,16 +170,16 @@ class HomeTab extends StatelessWidget {
                             'Visitantes',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 18,
+                              fontSize: 19,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 3),
                           Text(
                             '980',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 18,
+                              fontSize: 19,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -193,7 +193,7 @@ class HomeTab extends StatelessWidget {
                       margin: const EdgeInsets.only(left: 6),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
+                        color: Color.fromARGB(255, 229, 25, 202),
                       ),
                       child: const Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -202,17 +202,17 @@ class HomeTab extends StatelessWidget {
                             'Expositores',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 18,
+                              fontSize: 19,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 3),
                           Text(
                             '34',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 19,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ],
