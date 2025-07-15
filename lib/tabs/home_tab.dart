@@ -13,8 +13,6 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final lastCode = scannedCodes.isNotEmpty ? scannedCodes.last : null;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -26,7 +24,7 @@ class HomeTab extends StatelessWidget {
           padding: const EdgeInsets.only(left: 26.0),
           child: Image.asset('assets/logo.png', fit: BoxFit.contain),
         ),
-        title: const Text(''), // leave empty or use Spacer
+        title: const Text(''),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 26.0),
@@ -37,11 +35,7 @@ class HomeTab extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/login');
                 }
               },
-              icon: const Icon(
-                Icons.logout,
-                color: Colors.white,
-                size: 30,
-              ),
+              icon: const Icon(Icons.logout, color: Colors.white, size: 30),
             ),
           ),
         ],
@@ -56,76 +50,179 @@ class HomeTab extends StatelessWidget {
           ),
         ),
       ),
-
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          // gradient: LinearGradient(
-          //   begin: Alignment.centerLeft,
-          //   end: Alignment.centerRight,
-          //   colors: [Color(0xFF070707), Colors.black],
-          // ),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
-            child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+        decoration: const BoxDecoration(color: Colors.black),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Container(
-                  padding: const EdgeInsets.only(
-                    top: 20,
-                    bottom: 20,
-                    left: 20,
-                    right: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: [
-                        Color.fromARGB(255, 255, 209, 71),
-                        const Color.fromARGB(255, 222, 6, 193),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Icon(
-                        Icons.festival_outlined,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        'Eventos',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: 'Righteous',
-                        ),
-                      ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 20,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: [
+                      Color.fromARGB(255, 255, 209, 71),
+                      Color.fromARGB(255, 222, 6, 193),
                     ],
                   ),
+                  borderRadius: BorderRadius.circular(5),
                 ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Icon(
+                      Icons.festival_outlined,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Eventos',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontFamily: 'Righteous',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.white,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 25,
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Arraia JDM Experience',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      '19 e 20 de julho',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Curitiba, PR',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      'Castelo Trevizzo Eventos',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      'Avenida Manoel Ribas, 4289',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
               Row(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white60
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+                      margin: const EdgeInsets.only(right: 6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Visitantes',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            '980',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Text('Arraia JDM Experience', style: (TextStyle(color: Colors.white))),
-                  )
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+                      margin: const EdgeInsets.only(left: 6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Expositores',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            '34',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
-          )
         ),
       ),
     );
