@@ -115,16 +115,16 @@ class _TicketListTabState extends State<TicketListTab> {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          // gradient: const LinearGradient(
-          //   colors: [Color(0xFF18181B), Colors.black], // gray950 to black
-          //   begin: Alignment.topLeft,
-          //   end: Alignment.bottomRight,
-          // ),
-          color: color,
+          gradient: const LinearGradient(
+            colors: [Color(0xFF18181B), Colors.black], // gray950 to black
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          // color: color,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: Color(0xFF18181B), // gray950
-            width: 2,
+            color: Color.fromARGB(255, 52, 52, 52), // gray950
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
@@ -229,21 +229,21 @@ class _TicketListTabState extends State<TicketListTab> {
                       label: 'Total',
                       value: '$total',
                       icon: Icons.confirmation_number_outlined,
-                      color: Colors.grey
+                      color: Color.fromARGB(255, 255, 191, 0),
                     ),
                     const SizedBox(width: 10),
                     _infoCard(
                       label: 'Scanned',
                       value: '$scanned',
                       icon: Icons.qr_code_scanner,
-                      color: Colors.indigoAccent
+                      color: const Color.fromARGB(255, 255, 125, 125)
                     ),
                     const SizedBox(width: 10),
                     _infoCard(
                       label: 'Remaining',
                       value: '$remaining',
                       icon: Icons.hourglass_bottom,
-                      color: Colors.cyan
+                      color: Color.fromARGB(255, 234, 53, 210),
                     ),
                   ],
                 );

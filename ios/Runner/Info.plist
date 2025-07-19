@@ -22,7 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<!-- filepath: ios/Runner/Info.plist -->
+
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+	</array>
+
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>This app needs local network access for debugging and development.</string>
 	<key>NSCameraUsageDescription</key>

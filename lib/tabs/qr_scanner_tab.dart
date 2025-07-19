@@ -95,16 +95,17 @@ class QRScannerTabState extends State<QRScannerTab> {
                 await showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
-                    title: Text(match ? '✅ Ticket Válido' : '❌ Ticket Inválido'),
+                    contentPadding: EdgeInsets.only(top: 25, bottom: 20),
+                    title: Text(match ? 'Ticket Válido' : 'Ticket Inválido', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
                     content: Icon(
                       match ? Icons.check_circle : Icons.cancel,
                       color: match ? Colors.green : Colors.red,
-                      size: 80,
+                      size: 60,
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
+                        child: const Text('OK', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
                       ),
                     ],
                   ),
